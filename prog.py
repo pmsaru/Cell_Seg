@@ -14,16 +14,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import re 
 import seaborn as sns
+from PIL import Image
 
 def im_upload():
-	uploaded_file = st.file_uploader("Choose a file")
-	if uploaded_file is not None:
-		file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
-		opencv_image = cv2.imdecode(file_bytes, 1)
-		# fname = uploaded_file.name
-		# plt.imsave(fname,opencv_image)
-		st.image(opencv_image, channels="BGR")
-		return uploaded_file
+    uploaded_file = st.file_uploader("Choose a file")
+    if uploaded_file is not None:
+        im = Image.open(uploaded_file)
+        st.image(np.array(im))
+    return uploaded_file
 
 def bwareaopen(lbs,fname):
     if re.match('Leuko*',fname):
@@ -78,7 +76,6 @@ def merge_tiles(tiles,label_im,ori_im,fname):
     im_final=np.vstack(im_lst[0:row_ind])
     out=render_label(final, im_final, alpha = 1, alpha_boundary =0.8)
     st.image(out, channels="BGR")
-    # plt.imsave(outputfile + fname + '.jpg',out)
     return True
     
 def region_prop(label_im,ori_im,outputfile,fname):
@@ -119,7 +116,7 @@ def main():
 
     selected_box = st.sidebar.selectbox(
     'Choose one of the following',
-    ('Welcome','Image Upload and Segment','Cell Segmentation', 'Video', 'Face Detection', 'Feature Detection', 'Object Detection')
+    ('Welcome','Image Upload and Segment')
     )
 
     if selected_box == 'Welcome':
@@ -127,28 +124,11 @@ def main():
     if selected_box == 'Image Upload and Segment':
         filename=None
         filename=im_upload() 
-        # st.write(filename.name)
         fname = filename.name.split('.')[0]
-        # st.write(filename)
-        tiles = create_tiles(filename.name)
-        # st.write(tiles[0].image.size)
-        # st.write(len(tiles))
+        tiles = create_tiles(filename)
         with st.spinner('Wait for it...'):
             label_im,ori_im = model_star(tiles,fname)    
             merge_tiles(tiles,label_im,ori_im,fname) 
-        st.success("Done")  
-        # print(f'Done merging tiles of {fname}') 
-        # region_prop(label_im,ori_im,outputfile,fname)
-        # print(f'Done with extracting features of {fname}') 
-        # vplot(outputfile,fname)
-    # if selected_box == 'Video':
-    # 	video()
-    # if selected_box == 'Face Detection':
-    # 	face_detection()
-    # if selected_box == 'Feature Detection':
-    # 	feature_detection()
-    # if selected_box == 'Object Detection':
-    # 	object_detection()
 
 if __name__ == "__main__":
 	main()
