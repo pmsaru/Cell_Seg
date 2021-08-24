@@ -1,0 +1,12 @@
+scikit_image==0.18.1
+matplotlib==3.4.2
+stardist==0.7.2
+numpy==1.19.5
+image_slicer==2.1.1
+scipy==1.6.2
+opencv_python==4.5.3.56
+pandas==1.2.4
+seaborn==0.11.1
+csbdeep==0.6.2
+tqdm==4.59.0
+streamlit==0.87.0
